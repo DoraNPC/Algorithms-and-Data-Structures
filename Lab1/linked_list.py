@@ -36,6 +36,31 @@ class SortedLinkedList:
             node.link = next
         self.length += 1
 
+    def delete(self, value):
+        """Delete value and return it"""
+        if len(self) == 0:
+            return
+        if self.head.value <= value <= self.tale.value:
+            if len(self) == 1:
+                self.head = None
+                self.tale = None
+                self.length -=1
+                return value
+            if self.head.value == value:
+                self.head = self.head.link
+                self.length -=1
+                return value
+            prev = self.head
+            while prev.link.value < value:
+                prev = prev.link
+            if prev.link.value == value:
+                if prev.link == self.tale:
+                    self.tale = prev
+                prev.link = prev.link.link
+                self.length -=1
+                return value
+            
+
     def __str__(self):
         """List output"""
         node = self.head
@@ -80,8 +105,31 @@ if __name__ == '__main__':
         assert str(linked_list) == '2-->4-->5-->12-->46'
         assert len(linked_list) == 5
         assert not linked_list.is_empty()
+        a = linked_list.delete(1)
+        assert a is None and len(linked_list) == 5
+        a = linked_list.delete(2)
+        assert a == 2 and len(linked_list) == 4
+        assert str(linked_list) == '4-->5-->12-->46'
+        a = linked_list.delete(52)
+        assert a is None and len(linked_list) == 4
+        a = linked_list.delete(46)
+        assert a == 46 and len(linked_list) == 3
+        assert str(linked_list) == '4-->5-->12'
+        a = linked_list.delete(6)
+        assert a is None and len(linked_list) == 3
+        a = linked_list.delete(5)
+        assert a == 5 and len(linked_list) == 2
+        assert str(linked_list) == '4-->12'
         print('SortedLinkedList ok')
+
+    def test_delete():
+        sorted_list = SortedLinkedList()
+        sorted_list.add(2)
+        sorted_list.delete(2) 
+        assert len(sorted_list) == 0
+        print("Delete ok")
     
 
 test_node()
 test_list()
+test_delete()
