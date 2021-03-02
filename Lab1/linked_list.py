@@ -60,6 +60,12 @@ class SortedLinkedList:
                 self.length -=1
                 return value
             
+    def __iter__(self):
+        """Return iterator"""
+        node = self.head
+        while node:
+            yield node.value
+            node = node.link
 
     def __str__(self):
         """List output"""
@@ -92,7 +98,6 @@ if __name__ == '__main__':
         assert node2.value == 8 and node2.link == None
         print('Node ok')
 
-
     def test_list():
         linked_list = SortedLinkedList()
         assert len(linked_list) == 0
@@ -123,13 +128,36 @@ if __name__ == '__main__':
         print('SortedLinkedList ok')
 
     def test_delete():
-        sorted_list = SortedLinkedList()
-        sorted_list.add(2)
-        sorted_list.delete(2) 
-        assert len(sorted_list) == 0
-        print("Delete ok")
+        linked_list = SortedLinkedList()
+        linked_list.add(2)
+        linked_list.delete(2) 
+        assert len(linked_list) == 0
+        print('Delete ok')
+
+    def test_iter():
+        linked_list = SortedLinkedList()
+        linked_list.add(4)
+        linked_list.add(5)
+        linked_list.add(46)
+        linked_list.add(12)
+        linked_list.add(2)
+        assert list(linked_list) == [2, 4, 5, 12, 46]
+        print('Iter ok')
+
+    def input_check():
+        linked_list = SortedLinkedList()
+        linked_list.add(4)
+        linked_list.add(5)
+        linked_list.add(46)
+        linked_list.add(12)
+        linked_list.add(2)
+        assert 2 in linked_list
+        assert not 8 in linked_list
+        print('Input check ok')
     
 
 test_node()
 test_list()
 test_delete()
+test_iter()
+input_check()
