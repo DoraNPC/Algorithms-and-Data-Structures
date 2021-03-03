@@ -58,7 +58,11 @@ class SortedLinkedList:
                     prev.link = prev.link.link
             self.length -=1
             return value
-            
+
+    def sum_items(self):
+        """Sum of even numbers"""
+        return sum(value for value in self if value % 2 == 0)
+    
     def __iter__(self):
         """Return iterator"""
         node = self.head
@@ -67,6 +71,7 @@ class SortedLinkedList:
             node = node.link
 
     def __contains__(self, value):
+        """Is the item in list"""
         if self and self.head.value <= value <= self.tale.value:
             node = self.head
             while node.value < value:
@@ -165,6 +170,31 @@ if __name__ == '__main__':
         assert 6 in linked_list
         assert 8 not in linked_list
         print("Contains ok")
+
+    def test_sum_items():
+        linked_list = SortedLinkedList()
+        odd_linked_list = SortedLinkedList()
+        even_linked_list = SortedLinkedList()
+        assert linked_list.sum_items() == 0
+        odd_linked_list.add(3)
+        odd_linked_list.add(5)
+        odd_linked_list.add(9)
+        assert odd_linked_list.sum_items() == 0
+        even_linked_list.add(4)
+        even_linked_list.add(6)
+        even_linked_list.add(46)
+        even_linked_list.add(12)
+        even_linked_list.add(2)
+        assert even_linked_list.sum_items() == 70
+        linked_list.add(3)
+        linked_list.add(9)
+        linked_list.add(12)
+        linked_list.add(6)
+        assert linked_list.sum_items() == 18
+        print('SumItems ok')
+
+
+
     
 
 test_node()
@@ -172,3 +202,4 @@ test_list()
 test_delete()
 test_iter()
 test_contains()
+test_sum_items()
