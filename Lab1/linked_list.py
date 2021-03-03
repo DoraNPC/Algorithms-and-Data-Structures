@@ -27,13 +27,9 @@ class SortedLinkedList:
             self.tale.link = node
             self.tale = node
         else:
-            prev = self.head
-            next = self.head.link
-            while next.value < value:
-                prev = next
-                next = next.link
+            prev = self._get_node(value)
+            node.link = prev.link
             prev.link = node
-            node.link = next
         self.length += 1
 
     def delete(self, value):
@@ -47,9 +43,7 @@ class SortedLinkedList:
             elif self.head.value == value:
                 self.head = self.head.link
             else: 
-                prev = self.head
-                while prev.link.value < value:
-                    prev = prev.link
+                prev = self._get_node(value)
                 if prev.link.value > value:
                     return
                 else:
@@ -62,6 +56,13 @@ class SortedLinkedList:
     def sum_items(self):
         """Sum of even numbers"""
         return sum(value for value in self if value % 2 == 0)
+
+    def _get_node(self, value):
+        """Return closest smaller node"""
+        node = self.head
+        while node.link.value < value:
+            node = node.link
+        return node
     
     def __iter__(self):
         """Return iterator"""
@@ -111,10 +112,16 @@ if __name__ == '__main__':
         assert node2.value == 8 and node2.link == None
         print('Node ok')
 
-    def test_list():
+
+    def test_create():
         linked_list = SortedLinkedList()
         assert len(linked_list) == 0
         assert linked_list.is_empty()
+        print('Create ok')
+    
+
+    def test_add():
+        linked_list = SortedLinkedList()
         linked_list.add(4)
         linked_list.add(5)
         linked_list.add(46)
@@ -138,7 +145,8 @@ if __name__ == '__main__':
         a = linked_list.delete(5)
         assert a == 5 and len(linked_list) == 2
         assert str(linked_list) == '4-->12'
-        print('SortedLinkedList ok')
+        print('Add ok')
+
 
     def test_delete():
         linked_list = SortedLinkedList()
@@ -146,6 +154,7 @@ if __name__ == '__main__':
         linked_list.delete(2) 
         assert len(linked_list) == 0
         print('Delete ok')
+
 
     def test_iter():
         linked_list = SortedLinkedList()
@@ -156,6 +165,7 @@ if __name__ == '__main__':
         linked_list.add(2)
         assert list(linked_list) == [2, 4, 5, 12, 46]
         print('Iter ok')
+
 
     def test_contains():
         linked_list = SortedLinkedList()
@@ -170,6 +180,7 @@ if __name__ == '__main__':
         assert 6 in linked_list
         assert 8 not in linked_list
         print("Contains ok")
+
 
     def test_sum_items():
         linked_list = SortedLinkedList()
@@ -194,12 +205,14 @@ if __name__ == '__main__':
         print('SumItems ok')
 
 
+    def test_list():
+        test_create()
+        test_add()
+        test_delete()
+        test_iter()
+        test_contains()
+        test_sum_items()
 
-    
 
-test_node()
-test_list()
-test_delete()
-test_iter()
-test_contains()
-test_sum_items()
+    test_node()
+    test_list()
