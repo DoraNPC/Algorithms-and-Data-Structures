@@ -66,6 +66,15 @@ class SortedLinkedList:
             yield node.value
             node = node.link
 
+    def __contains__(self, value):
+        if self and self.head.value <= value <= self.tale.value:
+            node = self.head
+            while node.value < value:
+                node = node.link
+            if node.value == value:
+                return True
+        return False
+
     def __str__(self):
         """List output"""
         node = self.head
@@ -143,20 +152,23 @@ if __name__ == '__main__':
         assert list(linked_list) == [2, 4, 5, 12, 46]
         print('Iter ok')
 
-    def input_check():
+    def test_contains():
         linked_list = SortedLinkedList()
+        linked_list.add(3)
+        linked_list.add(1)
+        linked_list.add(6)
         linked_list.add(4)
-        linked_list.add(5)
-        linked_list.add(46)
-        linked_list.add(12)
-        linked_list.add(2)
-        assert 2 in linked_list
-        assert not 8 in linked_list
-        print('Input check ok')
+        assert -2 not in linked_list
+        assert 1 in linked_list
+        assert 2 not in linked_list
+        assert 3 in linked_list
+        assert 6 in linked_list
+        assert 8 not in linked_list
+        print("Contains ok")
     
 
 test_node()
 test_list()
 test_delete()
 test_iter()
-input_check()
+test_contains()
