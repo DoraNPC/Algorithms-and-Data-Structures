@@ -44,21 +44,20 @@ class SortedLinkedList:
             if len(self) == 1:
                 self.head = None
                 self.tale = None
-                self.length -=1
-                return value
-            if self.head.value == value:
+            elif self.head.value == value:
                 self.head = self.head.link
-                self.length -=1
-                return value
-            prev = self.head
-            while prev.link.value < value:
-                prev = prev.link
-            if prev.link.value == value:
-                if prev.link == self.tale:
-                    self.tale = prev
-                prev.link = prev.link.link
-                self.length -=1
-                return value
+            else: 
+                prev = self.head
+                while prev.link.value < value:
+                    prev = prev.link
+                if prev.link.value > value:
+                    return
+                else:
+                    if prev.link == self.tale:
+                        self.tale = prev
+                    prev.link = prev.link.link
+            self.length -=1
+            return value
             
     def __iter__(self):
         """Return iterator"""
