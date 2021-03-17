@@ -5,13 +5,6 @@ class BinaryNode:
         self.left = None
         self.right = None
 
-    def __iter__(self):
-        if self.left is not None:
-            yield from iter(self.left)
-        yield self.key
-        if self.right is not None:
-            yield from iter(self.right)
-            
     def add(self, value):
         if self.key < value:
             if self.right is None:
@@ -24,16 +17,45 @@ class BinaryNode:
             else:
                 self.left.add(value)
 
+    def __iter__(self):
+        if self.left is not None:
+            yield from iter(self.left)
+        yield self.key
+        if self.right is not None:
+            yield from iter(self.right)
+
     def __str__(self):
         return ' -> '.join(str(key) for key in self)
 
 
+class BinarySearchTree:
+    def __init__(self):
+        self.root = None
+
+    def add(self, value):
+        if self.root is None:
+            self.root = BinaryNode(key=value)
+        else:
+            self.root.add(value)
+        
+    def __iter__(self):
+        if self.root is not None:
+            return iter(self.root)
+
+    def __str__(self):
+        if self.root is not None:
+            return str(self.root)
+
+        
+
+
 if __name__ == "__main__":
     def tests():
-        test_node()
-        test_add()
+        test_iter_node()
+        test_add_node()
+        test_add_tree()
 
-    def test_node():
+    def test_iter_node():
         a = BinaryNode(1)
         b = BinaryNode(2)
         c = BinaryNode(3)
@@ -56,7 +78,7 @@ if __name__ == "__main__":
         assert str(d) == "1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7"
         print('__iter__ ok')
 
-    def test_add():
+    def test_add_node():
         node = BinaryNode(4)
         node.add(2)
         node.add(1)
@@ -65,7 +87,19 @@ if __name__ == "__main__":
         node.add(5)
         node.add(7)
         assert str(node) == "1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7"
-        print('add ok')
+        print('add_node ok')
+    
+    def test_add_tree():
+        node = BinarySearchTree()
+        node.add(4)
+        node.add(2)
+        node.add(1)
+        node.add(3)
+        node.add(6)
+        node.add(5)
+        node.add(7)
+        assert str(node) == "1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7"
+        print('add_tree ok')
         
 
     tests()
