@@ -17,6 +17,13 @@ class BinaryNode:
             else:
                 self.left.add(value)
 
+    def subtree_preorder(self):
+        yield self
+        if self.left:
+            yield from self.left.subtree_preorder()
+        if self.right:
+            yield from self.right.subtree_preorder()
+
     def subtree_inorder(self):
         if self.left:
             yield from self.left.subtree_inorder()
@@ -30,14 +37,6 @@ class BinaryNode:
         if self.right:
             yield from self.right.subtree_postorder()
         yield self
-
-    def subtree_preorder(self):
-        yield self
-        if self.left:
-            yield from self.left.subtree_preorder()
-        if self.right:
-            yield from self.right.subtree_preorder()
-    
 
     def __str__(self):
         return str(self.key)
@@ -57,6 +56,18 @@ class BinarySearchTree:
         if self.root:
             for node in self.root.subtree_inorder():
                 yield node.key
+
+    def detour(self, order):
+        if self.root:
+            if order == 'preorder':
+                iterator = self.root.subtree_preorder()
+            elif order == 'inorder':
+                iterator = iter(self)
+            elif order == 'postorder':
+                iterator = self.root.subtree_postorder()
+            else:
+                raise ValueError
+            return ' -> '.join(str(x) for x in iterator) 
 
     def __str__(self):
         if self.root:
@@ -115,6 +126,9 @@ if __name__ == "__main__":
         node.add(5)
         node.add(7)
         assert str(node) == "1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7"
+        assert node.detour('inorder') == "1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7"
+        assert node.detour('postorder') == "1 -> 3 -> 2 -> 5 -> 7 -> 6 -> 4"
+        assert node.detour('preorder') == "4 -> 2 -> 1 -> 3 -> 6 -> 5 -> 7"
         print('add_tree ok')
         
 
