@@ -18,14 +18,14 @@ class BinaryNode:
                 self.left.add(value)
 
     def __iter__(self):
-        if self.left is not None:
+        if self.left:
             yield from iter(self.left)
-        yield self.key
-        if self.right is not None:
+        yield self
+        if self.right:
             yield from iter(self.right)
 
     def __str__(self):
-        return ' -> '.join(str(key) for key in self)
+        return str(self.key)
 
 
 class BinarySearchTree:
@@ -39,15 +39,14 @@ class BinarySearchTree:
             self.root.add(value)
         
     def __iter__(self):
-        if self.root is not None:
-            return iter(self.root)
+        if self.root:
+            for node in iter(self.root):
+                yield node.key
 
     def __str__(self):
-        if self.root is not None:
-            return str(self.root)
-
-        
-
+        if self.root:
+            return ' -> '.join(str(x) for x in self.root) 
+   
 
 if __name__ == "__main__":
     def tests():
@@ -75,7 +74,7 @@ if __name__ == "__main__":
         f.right = g
         e.parent = f
         g.parent = f
-        assert str(d) == "1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7"
+        assert [str(x) for x in d] == ['1', '2', '3', '4', '5', '6', '7']
         print('__iter__ ok')
 
     def test_add_node():
@@ -86,7 +85,7 @@ if __name__ == "__main__":
         node.add(6)
         node.add(5)
         node.add(7)
-        assert str(node) == "1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7"
+        assert [str(x) for x in node] == ['1', '2', '3', '4', '5', '6', '7']
         print('add_node ok')
     
     def test_add_tree():
