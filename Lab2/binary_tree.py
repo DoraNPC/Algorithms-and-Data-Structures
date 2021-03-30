@@ -17,12 +17,27 @@ class BinaryNode:
             else:
                 self.left.add(value)
 
-    def __iter__(self):
+    def subtree_inorder(self):
         if self.left:
-            yield from iter(self.left)
+            yield from self.left.subtree_inorder()
         yield self
         if self.right:
-            yield from iter(self.right)
+            yield from self.right.subtree_inorder()
+
+    def subtree_postorder(self):
+        if self.left:
+            yield from self.left.subtree_postorder()
+        if self.right:
+            yield from self.right.subtree_postorder()
+        yield self
+
+    def subtree_preorder(self):
+        yield self
+        if self.left:
+            yield from self.left.subtree_preorder()
+        if self.right:
+            yield from self.right.subtree_preorder()
+    
 
     def __str__(self):
         return str(self.key)
@@ -40,12 +55,12 @@ class BinarySearchTree:
         
     def __iter__(self):
         if self.root:
-            for node in iter(self.root):
+            for node in self.root.subtree_inorder():
                 yield node.key
 
     def __str__(self):
         if self.root:
-            return ' -> '.join(str(x) for x in self.root) 
+            return ' -> '.join(str(x) for x in self.root.subtree_inorder()) 
    
 
 if __name__ == "__main__":
@@ -74,7 +89,9 @@ if __name__ == "__main__":
         f.right = g
         e.parent = f
         g.parent = f
-        assert [str(x) for x in d] == ['1', '2', '3', '4', '5', '6', '7']
+        assert [str(x) for x in d.subtree_inorder()] == ['1', '2', '3', '4', '5', '6', '7']
+        assert [str(x) for x in d.subtree_postorder()] == ['1', '3', '2', '5', '7', '6', '4']
+        assert [str(x) for x in d.subtree_preorder()] == ['4', '2', '1', '3', '6', '5', '7']
         print('__iter__ ok')
 
     def test_add_node():
@@ -85,7 +102,7 @@ if __name__ == "__main__":
         node.add(6)
         node.add(5)
         node.add(7)
-        assert [str(x) for x in node] == ['1', '2', '3', '4', '5', '6', '7']
+        assert [str(x) for x in node.subtree_inorder()] == ['1', '2', '3', '4', '5', '6', '7']
         print('add_node ok')
     
     def test_add_tree():
