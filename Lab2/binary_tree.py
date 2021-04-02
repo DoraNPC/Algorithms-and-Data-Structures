@@ -5,6 +5,14 @@ class BinaryNode:
         self.left = None
         self.right = None
 
+    def subtree_find(self, value):
+        if value == self.key:
+            return self
+        if value < self.key and self.left:
+            return self.left.subtree_find(value)
+        if value > self.key and self.right:
+            return self.right.subtree_find(value)
+
     def add(self, value):
         if self.key < value:
             if self.right is None:
@@ -16,7 +24,7 @@ class BinaryNode:
                 self.left = BinaryNode(key=value, parent=self)
             else:
                 self.left.add(value)
-
+            
     def subtree_preorder(self):
         yield self
         if self.left:
@@ -56,6 +64,27 @@ class BinarySearchTree:
         if self.root:
             for node in self.root.subtree_inorder():
                 yield node.key
+
+    def __contains__(self, value):
+        if self.root:
+            node = self.root.subtree_find(value)
+            return node is not None
+
+    def __len__(self):
+        raise NotImplementedError
+
+    def search(self, value):
+        if value in self:
+            return value
+
+    def is_full(self):
+        raise NotImplementedError
+
+    def is_empty(self):
+        raise NotImplementedError
+
+    def delete(self, value):
+        raise NotImplementedError
 
     def detour(self, order):
         if self.root:
@@ -129,6 +158,10 @@ if __name__ == "__main__":
         assert node.detour('inorder') == "1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7"
         assert node.detour('postorder') == "1 -> 3 -> 2 -> 5 -> 7 -> 6 -> 4"
         assert node.detour('preorder') == "4 -> 2 -> 1 -> 3 -> 6 -> 5 -> 7"
+        assert 8 not in node
+        assert 2 in node
+        assert node.search(3) == 3
+        assert node.search(9) is None
         print('add_tree ok')
         
 
