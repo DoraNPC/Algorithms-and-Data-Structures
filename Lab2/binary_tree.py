@@ -5,6 +5,45 @@ class BinaryNode:
         self.left = None
         self.right = None
 
+    def subtree_first(self):
+        if self.left:
+            return self.left.subtree_first()
+        return self
+
+    def subtree_last(self):
+        if self.right:
+            return self.right.subtree_last()
+        return self 
+
+    def predecessor(self):
+        if self.left:
+            return self.left.subtree_last()
+        while self.parent and (self is self.parent.left):
+            self = self.parent
+        return self.parent
+
+    def successor(self):
+        if self.right:
+            return self.right.subtree_first()
+        while self.parent and (self is self.parent.right):
+            self = self.parent
+        return self.parent
+
+    def subtree_delete(self):
+        if self.left or self.right:
+            if self.left:
+                node = self.predecessor()
+            else:
+                node = self.successor()
+            self.key, node.key = node.key, self.key
+            return node.subtree_delete()
+        if self.parent:
+            if self.parent.left is self:
+                self.parent.left = None
+            else:
+                self.parent.right = None 
+        return self
+
     def subtree_find(self, value):
         if value == self.key:
             return self
@@ -86,7 +125,14 @@ class BinarySearchTree:
         return self.size == 0
 
     def delete(self, value):
-        raise NotImplementedError
+        if self.root:
+            node = self.root.subtree_find(value)
+            if node:
+                deleted = node.subtree_delete()
+                if deleted.parent is None:
+                    self.root = None
+                self.size -= 1
+                return value
 
     def detour(self, order):
         if self.root:
@@ -167,6 +213,9 @@ if __name__ == "__main__":
         assert len(node) == 7
         assert node.is_full() == True
         assert node.is_empty() == False
+        a = node.delete(7)
+        assert a == 7
+        assert str(node) == "1 -> 2 -> 3 -> 4 -> 5 -> 6"
         print('add_tree ok')
         
 
