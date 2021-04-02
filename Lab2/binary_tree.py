@@ -62,7 +62,8 @@ class BinaryNode:
             right.right.parent = self
         right.right, right.left = right.left, self.left
         if self.left:
-            self.left = right
+            self.left.parent = right
+        self.left = right
         right.subtree_update()
         self.subtree_update()
 
