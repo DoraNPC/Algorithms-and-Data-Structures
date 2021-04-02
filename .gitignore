@@ -9,6 +9,9 @@ __pycache__/
 # Environments
 venv/
 
+#vscode
+.vscode/
+
 # pycharm
 .idea/
 
