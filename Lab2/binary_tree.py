@@ -53,12 +53,14 @@ class BinaryNode:
 class BinarySearchTree:
     def __init__(self):
         self.root = None
+        self.size = 0
 
     def add(self, value):
         if self.root is None:
             self.root = BinaryNode(key=value)
         else:
             self.root.add(value)
+        self.size += 1
         
     def __iter__(self):
         if self.root:
@@ -71,17 +73,17 @@ class BinarySearchTree:
             return node is not None
 
     def __len__(self):
-        raise NotImplementedError
+        return self.size
 
     def search(self, value):
         if value in self:
             return value
 
     def is_full(self):
-        raise NotImplementedError
+        return not self.is_empty()
 
     def is_empty(self):
-        raise NotImplementedError
+        return self.size == 0
 
     def delete(self, value):
         raise NotImplementedError
@@ -162,6 +164,9 @@ if __name__ == "__main__":
         assert 2 in node
         assert node.search(3) == 3
         assert node.search(9) is None
+        assert len(node) == 7
+        assert node.is_full() == True
+        assert node.is_empty() == False
         print('add_tree ok')
         
 
