@@ -1,6 +1,10 @@
+def height(node):
+    return node.height if node else -1
+
 class BinaryNode:
     def __init__(self, key=None, parent=None):
         self.key = key
+        self.height = 0
         self.parent = parent
         self.left = None
         self.right = None
@@ -29,6 +33,55 @@ class BinaryNode:
             self = self.parent
         return self.parent
 
+    def subtree_update(self):
+        self.height = 1 + max(height(self.left), height(self.right))
+
+    def skew(self):
+        return height(self.right) - height(self.left)
+
+    def subtree_rotate_right(self):
+        assert self.left, "No left subtree"
+        left = self.left
+        self.key, left.key = left.key, self.key
+        self.left = left.left
+        if left.left:
+            left.left.parent = self
+        left.left, left.right = left.right, self.right
+        if self.right:
+            self.right.parent = left
+        self.right = left
+        left.subtree_update()
+        self.subtree_update()
+
+    def subtree_rotate_left(self):
+        assert self.right, "No right subtree"
+        right = self.right
+        self.key, right.key = right.key, self.key
+        self.right = right.right
+        if right.right:
+            right.right.parent = self
+        right.right, right.left = right.left, self.left
+        if self.left:
+            self.left = right
+        right.subtree_update()
+        self.subtree_update()
+
+    def rebalance(self):
+        if self.skew() == 2:
+            if self.right.skew() < 0:
+                self.right.subtree_rotate_right()
+            self.subtree_rotate_left()
+        elif self.skew() == -2:
+            if self.left.skew() > 0:
+                self.left.subtree_rotate_left()
+            self.subtree_rotate_right()
+
+    def maintain(self):
+        self.rebalance()
+        self.subtree_update()
+        if self.parent:
+            self.parent.maintain()
+
     def subtree_delete(self):
         if self.left or self.right:
             if self.left:
@@ -42,6 +95,7 @@ class BinaryNode:
                 self.parent.left = None
             else:
                 self.parent.right = None 
+            self.parent.maintain()
         return self
 
     def subtree_find(self, value):
@@ -52,17 +106,21 @@ class BinaryNode:
         if value > self.key and self.right:
             return self.right.subtree_find(value)
 
-    def add(self, value):
-        if self.key < value:
-            if self.right is None:
-                self.right = BinaryNode(key=value, parent=self)
+    def subtree_add(self, other):
+        if other.key < self.key:
+            if self.left:
+                self.left.subtree_add(other)
             else:
-                self.right.add(value)
+                self.left = other
+                other.parent = self
+                self.maintain()
         else:
-            if self.left is None:
-                self.left = BinaryNode(key=value, parent=self)
+            if self.right:
+                self.right.subtree_add(other)
             else:
-                self.left.add(value)
+                self.right = other
+                other.parent = self
+                self.maintain()
             
     def subtree_preorder(self):
         yield self
@@ -95,10 +153,11 @@ class BinarySearchTree:
         self.size = 0
 
     def add(self, value):
-        if self.root is None:
-            self.root = BinaryNode(key=value)
+        node = BinaryNode(value)
+        if self.root:
+            self.root.subtree_add(node)
         else:
-            self.root.add(value)
+            self.root = node
         self.size += 1
         
     def __iter__(self):
@@ -183,13 +242,19 @@ if __name__ == "__main__":
         print('__iter__ ok')
 
     def test_add_node():
-        node = BinaryNode(4)
-        node.add(2)
-        node.add(1)
-        node.add(3)
-        node.add(6)
-        node.add(5)
-        node.add(7)
+        node = BinaryNode(3)
+        a = BinaryNode(2)
+        b = BinaryNode(5)
+        c = BinaryNode(1)
+        d = BinaryNode(4)
+        e = BinaryNode(6)
+        f = BinaryNode(7)
+        node.subtree_add(a)
+        node.subtree_add(b)
+        node.subtree_add(c)
+        node.subtree_add(d)
+        node.subtree_add(e)
+        node.subtree_add(f)
         assert [str(x) for x in node.subtree_inorder()] == ['1', '2', '3', '4', '5', '6', '7']
         print('add_node ok')
     
