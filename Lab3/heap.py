@@ -10,9 +10,22 @@ def parent(index):
     return (index + 1) // 2 - 1
     return result
 
-class Heap:
+class MaxHeap:
     def __init__(self):
         self.list = []
+
+    def max_heapify(self, index):
+        l = left(index)
+        r = right(index)
+        if (l < len(self.list)) and (self.list[l] > self.list[index]):
+            largest = l
+        else:
+            largest = index
+        if (r < len(self.list)) and (self.list[r] > self.list[largest]):
+            largest = r
+        if largest != index:
+            self.list[index], self.list[largest] = self.list[largest], self.list[index]
+            self.max_heapify(largest)
 
 
 if __name__ == "__main__":
@@ -40,6 +53,24 @@ if __name__ == "__main__":
         assert parent(10) == 4
         assert parent(100) == 49
         assert parent(99) == 49
-        
         print('parent ok')
+
+    def test_max_heap():
+        heap = MaxHeap()
+        heap.list = [1, 16, 19, 0, 2, 8, 9, 7]
+        heap.max_heapify(0)
+        assert heap.list == [19, 16, 9, 0, 2, 8, 1, 7]
+        
+        heap.list = [7, 16, 9, 8, 15, 0, 20, 3, 1]
+        heap.max_heapify(0) 
+        assert heap.list == [16, 15, 9, 8, 7, 0, 20, 3, 1]
+        
+        heap.list = [5, 20, 10, 6, 1, 12]
+        heap.max_heapify(2) 
+        assert heap.list== [5, 20, 12, 6, 1, 10]
+        print("max_heapify ok")
+
+
+
     test()
+    test_max_heap()
