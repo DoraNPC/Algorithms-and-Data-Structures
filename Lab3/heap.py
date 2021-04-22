@@ -10,15 +10,19 @@ def parent(index):
 def last_with_child(length):
     return length // 2 - 1
 
+        
 class MaxHeap:
     def __init__(self):
         self.list = []
+        
+    def up(self, index):
+        if self.list[index] > self.list[parent(index)] and parent(index) >= 0:
+            self.list[index], self.list[parent(index)] = self.list[parent(index)], self.list[index]
+            self.up(parent(index))
 
     def insert(self, value):
-        raise NotImplementedError
-
-    def delete(self, value):
-        raise NotImplementedError
+        self.list.append(value)
+        self.up(len(self.list)-1)
 
     def max_heapify(self, index):
         l = left(index)
@@ -79,13 +83,22 @@ if __name__ == "__main__":
         print('parent ok')
 
     def test_insert():
+        array = [12, 1, 5, 6, 3, 7, 15]
         heap = MaxHeap()
-        heap.list = [19, 16, 9, 0, 2, 8, 1]
-        heap.insert(7)
+        for val in array:
+            heap.insert(val)
+        assert heap.check_invariant()
+        assert len(heap.list) == len(array)
+        assert all(val in heap.list for val in array)
 
-    def test_delete():
+        array = [3, 16, 1, 39, 0, 2]
         heap = MaxHeap()
-        heap.list = [19, 16, 9, 0, 2, 8, 1]
+        for val in array:
+            heap.insert(val)
+        assert heap.check_invariant()
+        assert len(heap.list) == len(array)
+        assert all(val in heap.list for val in array)
+        print("insert ok")
 
     def test_max_heap():
         heap = MaxHeap()
@@ -125,6 +138,7 @@ if __name__ == "__main__":
         print("build_max_heap ok")
 
     test()
+    test_insert()
     test_max_heap()
     test_check_invariant()
     test_build_max_heap()
