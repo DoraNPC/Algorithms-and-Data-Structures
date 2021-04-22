@@ -24,6 +24,13 @@ class MaxHeap:
         self.list.append(value)
         self.up(len(self.list)-1)
 
+    def delete(self):
+        index_last = len(self.list) - 1
+        self.list[0], self.list[index_last] = self.list[index_last], self.list[0]
+        result = self.list.pop()
+        self.max_heapify(0)
+        return result
+
     def max_heapify(self, index):
         l = left(index)
         r = right(index)
@@ -100,6 +107,24 @@ if __name__ == "__main__":
         assert all(val in heap.list for val in array)
         print("insert ok")
 
+    def test_delete():
+        heap = MaxHeap()
+        heap.list = [39, 14, 16, 10, 11, 9, 4, 2]
+        length_before = len(heap.list)
+        assert heap.delete() == 39
+        length_after = len(heap.list)
+        assert length_before == length_after + 1
+        assert heap.check_invariant()
+
+        heap = MaxHeap()
+        heap.list = [32, 12, 11, 10, 6, 4, 3]
+        length_before = len(heap.list)
+        assert heap.delete() == 32
+        length_after = len(heap.list)
+        assert length_before == length_after + 1
+        assert heap.check_invariant()
+        print("delete ok")
+
     def test_max_heap():
         heap = MaxHeap()
         heap.list = [1, 16, 19, 0, 2, 8, 9, 7]
@@ -139,6 +164,7 @@ if __name__ == "__main__":
 
     test()
     test_insert()
+    test_delete()
     test_max_heap()
     test_check_invariant()
     test_build_max_heap()
