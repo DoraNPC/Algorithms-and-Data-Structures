@@ -1,14 +1,14 @@
 def left(index):
-    result = index * 2 + 1
-    return result
+    return index*2 + 1
 
 def right(index):
-    result = index*2 + 2
-    return result
+    return index*2 + 2
 
 def parent(index):
     return (index + 1) // 2 - 1
-    return result
+
+def last_with_child(length):
+    return length // 2 - 1
 
 class MaxHeap:
     def __init__(self):
@@ -26,6 +26,21 @@ class MaxHeap:
         if largest != index:
             self.list[index], self.list[largest] = self.list[largest], self.list[index]
             self.max_heapify(largest)
+
+    def check_invariant(self):
+        for i in range(0, last_with_child(len(self.list)+1)):
+            if self.list[i] < self.list[left(i)] or self.list[i] < self.list[right(i)]:
+                return False
+        return True
+
+    @classmethod
+    def build_max_heap(cls, array):
+        result = cls()
+        result.list = array[:]
+        indexes = range(0, last_with_child(len(array)+1))
+        for i in reversed(indexes):
+            result.max_heapify(i)
+        return result
 
 
 if __name__ == "__main__":
@@ -70,7 +85,30 @@ if __name__ == "__main__":
         assert heap.list== [5, 20, 12, 6, 1, 10]
         print("max_heapify ok")
 
+    def test_check_invariant():
+        heap = MaxHeap()
+        heap.list = [19, 16, 9, 0, 2, 8, 1, 7]
+        assert heap.check_invariant()
+        heap.list = [1, 16, 19, 0, 2, 8, 9, 7]
+        assert not heap.check_invariant()
+        print("check_invariant ok")
 
+    def test_build_max_heap():
+        array = [1, 6, 12, 8, 33, 6, 3]
+        result = MaxHeap.build_max_heap(array)
+        assert result.check_invariant()
+
+        array = [6, 1, 3, 49, 55, 8]
+        result = MaxHeap.build_max_heap(array)
+        assert result.check_invariant()
+
+        array = [22, 14, 2, 6, 11, 0]
+        result = MaxHeap.build_max_heap(array)
+        assert result.check_invariant()
+        print("build_max_heap ok")
 
     test()
     test_max_heap()
+    test_check_invariant()
+    test_build_max_heap()
+    
