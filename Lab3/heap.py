@@ -14,6 +14,12 @@ class MaxHeap:
     def __init__(self):
         self.list = []
 
+    def insert(self, value):
+        raise NotImplementedError
+
+    def delete(self, value):
+        raise NotImplementedError
+
     def max_heapify(self, index):
         l = left(index)
         r = right(index)
@@ -28,8 +34,10 @@ class MaxHeap:
             self.max_heapify(largest)
 
     def check_invariant(self):
-        for i in range(0, last_with_child(len(self.list)+1)):
-            if self.list[i] < self.list[left(i)] or self.list[i] < self.list[right(i)]:
+        for i in range(0, last_with_child(len(self.list))+1):
+            check_left = self.list[i] >= self.list[left(i)]
+            check_right = self.list[i] >= self.list[right(i)] if right(i) < len(self.list) else True
+            if not (check_left and check_right):
                 return False
         return True
 
@@ -37,7 +45,7 @@ class MaxHeap:
     def build_max_heap(cls, array):
         result = cls()
         result.list = array[:]
-        indexes = range(0, last_with_child(len(array)+1))
+        indexes = range(0, last_with_child(len(array))+1)
         for i in reversed(indexes):
             result.max_heapify(i)
         return result
@@ -70,6 +78,15 @@ if __name__ == "__main__":
         assert parent(99) == 49
         print('parent ok')
 
+    def test_insert():
+        heap = MaxHeap()
+        heap.list = [19, 16, 9, 0, 2, 8, 1]
+        heap.insert(7)
+
+    def test_delete():
+        heap = MaxHeap()
+        heap.list = [19, 16, 9, 0, 2, 8, 1]
+
     def test_max_heap():
         heap = MaxHeap()
         heap.list = [1, 16, 19, 0, 2, 8, 9, 7]
@@ -87,7 +104,7 @@ if __name__ == "__main__":
 
     def test_check_invariant():
         heap = MaxHeap()
-        heap.list = [19, 16, 9, 0, 2, 8, 1, 7]
+        heap.list = [19, 16, 9, 0, 2, 8, 1]
         assert heap.check_invariant()
         heap.list = [1, 16, 19, 0, 2, 8, 9, 7]
         assert not heap.check_invariant()
@@ -111,4 +128,3 @@ if __name__ == "__main__":
     test_max_heap()
     test_check_invariant()
     test_build_max_heap()
-    
