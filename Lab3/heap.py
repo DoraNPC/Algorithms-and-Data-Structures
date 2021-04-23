@@ -23,12 +23,14 @@ class MaxHeap:
             self.up(parent(index))
 
     def max_value(self):
-        if not self.is_empty:
+        if not self.is_empty():
             return self.list[0]
 
     def insert(self, value):
         if self.is_full() and value < self.max_value():
             self.delete()
+        elif self.is_full() and value >= self.max_value():
+            return
         self.list.append(value)
         self.length += 1
         self.up(self.length-1)
@@ -95,6 +97,26 @@ class MaxHeap:
 
     def __str__(self):
         return str(self.list)
+
+    @classmethod
+    def find_k_min(cls, array, k):
+        new_array = cls.sort(array)
+        return new_array[:k]
+    
+    @classmethod
+    def find_k_min2(cls, array, k):
+        heap = cls(max_length=k)
+        for i in array:
+            heap.insert(i)
+        return heap.list
+
+    @classmethod
+    def find_k_max(cls, array, k):
+        heap = cls.build_max_heap(array)
+        result = []
+        for _ in range(k):
+            result.append(heap.delete())
+        return result
 
 
 if __name__ == "__main__":
