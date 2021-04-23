@@ -12,16 +12,23 @@ def last_with_child(length):
 
         
 class MaxHeap:
-    def __init__(self):
+    def __init__(self, *, max_length=float("inf")):
         self.list = []
         self.length = 0
+        self.max_length = max_length
         
     def up(self, index):
         if self.list[index] > self.list[parent(index)] and parent(index) >= 0:
             self.list[index], self.list[parent(index)] = self.list[parent(index)], self.list[index]
             self.up(parent(index))
 
+    def max_value(self):
+        if not self.is_empty:
+            return self.list[0]
+
     def insert(self, value):
+        if self.is_full() and value < self.max_value():
+            self.delete()
         self.list.append(value)
         self.length += 1
         self.up(self.length-1)
@@ -33,6 +40,8 @@ class MaxHeap:
         self.max_heapify(0)
 
     def delete(self):
+        if self.length == 0:
+            raise IndexError("delete from empty heap")
         self.change()
         result = self.list.pop()
         return result
@@ -74,6 +83,18 @@ class MaxHeap:
         while heap.length > 1:
             heap.change()
         return heap.list
+
+    def is_empty(self):
+        return self.length == 0
+
+    def is_full(self):
+        return self.length == self.max_length
+
+    def size(self):
+        return self.length
+
+    def __str__(self):
+        return str(self.list)
 
 
 if __name__ == "__main__":
@@ -124,6 +145,7 @@ if __name__ == "__main__":
     def test_delete():
         heap = MaxHeap()
         heap.list = [39, 14, 16, 10, 11, 9, 4, 2]
+        heap.length = 8
         length_before = heap.length
         assert heap.delete() == 39
         length_after = heap.length
@@ -132,6 +154,7 @@ if __name__ == "__main__":
 
         heap = MaxHeap()
         heap.list = [32, 12, 11, 10, 6, 4, 3]
+        heap.length = 7
         length_before = heap.length
         assert heap.delete() == 32
         length_after = heap.length
@@ -186,7 +209,6 @@ if __name__ == "__main__":
         result = MaxHeap.sort(array)
         assert result == [4, 5, 6, 7, 11, 16]
         print("sort ok")
-
 
     test()
     test_insert()
