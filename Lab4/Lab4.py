@@ -1,4 +1,5 @@
 from min_heap import PriorityQueue
+from linked_list import SortedLinkedList
 
 class GraphWeighted:
     def __init__(self, graph=None):
@@ -60,9 +61,29 @@ class GraphWeighted:
                     priority_queue.decrease_key(vertex, pathes[vertex])
         return pathes
 
+    def Prim(self):
+        queue = SortedLinkedList()
+        length = len(self._graph)
+        change = {k: v for k, v in zip(sorted(list(self._graph.keys())), range(length))}
+        result = [[0 if i == j else None
+            for i in range(length)]
+            for j in range(length)]
+        visited = set()
+        start = set(self._graph.keys()).pop()
+        visited.add(start)
+        for edge in self._graph[start]:
+            queue.add((edge, start))
+        while queue:
+            (weight, end), start = queue.get_min()
+            if end not in visited:
+                visited.add(end)
+                result[change[start]][change[end]] = weight
+                result[change[end]][change[start]] = weight
+                for edge in self._graph[end]:
+                    queue.add((edge, end))
+        return result
+
         
-
-
 if __name__ == "__main__":
     mesh = {
         "nodes": {"A", "B", "C", "D", "E", "F"},
@@ -126,4 +147,8 @@ if __name__ == "__main__":
 
     graph = GraphWeighted(mesh2)
     result = graph.Dijkstra("A")
+    print(result)
+
+    graph = GraphWeighted(mesh1)
+    result = graph.Prim()
     print(result)
