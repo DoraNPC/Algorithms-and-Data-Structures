@@ -1,3 +1,5 @@
+from min_heap import PriorityQueue
+
 class GraphWeighted:
     def __init__(self, graph=None):
         self._graph = {}
@@ -17,14 +19,13 @@ class GraphWeighted:
         edges = "Edges:\n" + "\n".join(f'{start} -> {end} : {weight}' for (weight, end), start in self)
         return vertices + '\n' + edges
 
-    def add_edge_undirect(self, edge):
+    def add_edge(self, edge):
         (length, end), start = edge
         if start not in self._graph:
             self._graph[start] = set()
         if end not in self._graph:
             self._graph[end] = set()
         self._graph[start].add((length, end))
-        self._graph[end].add((length, start))
         
     def Kruskal(self):
         edges = []
@@ -39,10 +40,28 @@ class GraphWeighted:
         for edge in edges:
             (_, end), start = edge
             if connect[start] != connect[end]:
-                result.add_edge_undirect(edge)
+                result.add_edge(edge)
                 connect[start] |= connect[end]
-                connect[end] = connect[start]
         return result
+
+    def Dijkstra(self, start):
+        pathes = {v: [float("inf"), None] for v in self._graph}
+        pathes[start] = [0, str(start)]
+        priority_queue = PriorityQueue()
+        for vertex in self._graph:
+            priority_queue.insert(vertex, pathes[vertex])
+        for _ in range(len(self._graph)):
+            minimal = priority_queue.extract_min()
+            vertex_weight, path = pathes[minimal]
+            for edge_weight, vertex in self._graph[minimal]:
+                if (weight := vertex_weight + edge_weight) < pathes[vertex][0]:
+                    pathes[vertex][0] = weight
+                    pathes[vertex][1] = path + str(vertex)
+                    priority_queue.decrease_key(vertex, pathes[vertex])
+        return pathes
+
+        
+
 
 if __name__ == "__main__":
     mesh = {
@@ -62,12 +81,35 @@ if __name__ == "__main__":
         "nodes": {"A", "B", "C", "D", "E"},
         "edges": {
             ("A", "B", 3),
+            ("B", "A", 3),
+            ("C", "B", 5),
             ("B", "C", 5),
             ("B", "E", 1),
+            ("E", "B", 1),
             ("C", "D", 6),
+            ("D", "C", 6),
             ("A", "D", 4),
+            ("D", "A", 4),
             ("A", "E", 2),
+            ("E", "A", 2),
             ("E", "D", 7),
+            ("D", "E", 7),
+        }
+    }
+
+    mesh2 = {
+        "nodes": {"A", "B", "C", "D", "E", "F"},
+        "edges": {
+            ("A", "B", 1),
+            ("A", "D", 8),
+            ("A", "F", 3),
+            ("B", "C", 6),
+            ("B", "D", 3),
+            ("C", "D", 5),
+            ("D", "E", 4),
+            ("D", "F", 7),
+            ("E", "F", 2),
+            ("F", "C", 3),
         }
     }
 
@@ -75,9 +117,13 @@ if __name__ == "__main__":
     print(graph)
 
     graph = GraphWeighted()
-    graph.add_edge_undirect(((4, "b"), "a"))
+    graph.add_edge(((4, "b"), "a"))
     print(graph)
 
     graph = GraphWeighted(mesh1)
     result = graph.Kruskal()
+    print(result)
+
+    graph = GraphWeighted(mesh2)
+    result = graph.Dijkstra("A")
     print(result)
