@@ -98,6 +98,32 @@ class SortedLinkedList:
         """Check if list is empty"""
         return self.length == 0
 
+    def merge(self, other):
+        """Merge to lists"""
+        if self or other:
+            i = self.head
+            j = other.head
+            first = None
+            while i is not None and j is not None:
+                if i.value > j.value:
+                    val = j.value
+                    j = j.link
+                else:
+                    val = i.value
+                    i = i.link
+                first = Node(val, first)
+            while i:
+                first = Node(i.value, first)
+                i = i.link
+            while j:
+                first = Node(j.value, first)
+                j = j.link
+            end = first
+            while end.link:
+                end = end.link
+            self.head = first
+            self.tale = end
+            self.length = self.length + other.length
 
 if __name__ == '__main__':
     def test_node():
@@ -204,6 +230,24 @@ if __name__ == '__main__':
         assert linked_list.sum_items() == 18
         print('SumItems ok')
 
+    def test_merge():
+        L1 = SortedLinkedList()
+        L1.add(4)
+        L1.add(5)
+        L1.add(46)
+        L1.add(12)
+        L1.add(2)
+        L2 = SortedLinkedList()
+        L2.add(17)
+        L2.add(10)
+        L2.add(8)
+        L2.add(22)
+        L2.add(6)
+        L2.add(0)
+        L1.merge(L2)
+        assert list(L1) == [46, 22, 17, 12, 10, 8, 6, 5, 4, 2, 0]
+        print("Merge ok")
+
 
     def test_list():
         test_create()
@@ -212,6 +256,7 @@ if __name__ == '__main__':
         test_iter()
         test_contains()
         test_sum_items()
+        test_merge()
 
 
     test_node()
